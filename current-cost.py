@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 ###
 # current-cost.py
 #
@@ -91,17 +91,17 @@ def main():
 			data = meter.readline()
 		except:
 			pass
-	
+	print(data)
 	meter.close()
 	
 	try:
 		watts_ex = re.compile('<watts>([0-9]+)</watts>')
 		temp_ex = re.compile('<tmpr>([\ ]?[0-9\.]+)</tmpr>') # when temperature is less than 10, currentcost adds a space before the number
 		time_ex = re.compile('<time>([0-9\.\:]+)</time>')
-		
-		watts = str(int(watts_ex.findall(data)[0])) # cast to and from int to strip leading zeros
-		temp = temp_ex.findall(data)[0].strip() # remove that extra space
-		time = time_ex.findall(data)[0]
+
+		watts = int(watts_ex.findall(data)[0])  # cast to and from int to strip leading zeros
+		temp = float(temp_ex.findall(data)[0])  # remove that extra space
+		time = str(time_ex.findall(data)[0])
 	except:
 		#sys.stderr.write("Could not get details from device")
 		watts = '--'
