@@ -31,7 +31,6 @@
 ###
 
 import getopt
-import getopt.GetoptError
 import sys
 import serial
 import re
@@ -81,7 +80,7 @@ def main():
 			sys.exit()
 
 	meter = serial.Serial(port, baud, timeout=timeout)
-	
+
 	try:
 		data = meter.readline()
 	except:
