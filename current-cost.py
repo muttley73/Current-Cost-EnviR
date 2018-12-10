@@ -38,16 +38,12 @@ import time
 
 def usage():
 	print("Current-Cost v1.0 By Marcus Povey <marcus@marcus-povey.co.uk>");
-	print
 	print("Usage: python current-cost.py [-t timeout] [-p serial-port] [-b baudrate] [-o \"formatted list of output\"]")
-	print
 	print("Where:")
 	print("\t * timeout: is max time to wait for a reading (Default 10)")
 	print("\t * serial-port: Serial port that the meter is connected to (default /dev/ttyUSB0)")
 	print("\t * baudrate: Speed to connect to device (default 57600, which you shouldn't need to change unless you're using a different meter)")
-	print
 	print("Format string similar to 'Energy Now: {{option}}, Temperature: {{option}}'")
-	print
 	print("Where option can be {{watts}}, {{temp}}, {{time}}")
 
 def main():
@@ -91,19 +87,21 @@ def main():
 			data = meter.readline()
 		except:
 			pass
-	data = str(data)
-	meter.close()
-	
-	watts_ex = re.compile('<watts>([0-9]+)</watts>')
-	temp_ex = re.compile('<tmpr>([\ ]?[0-9\.]+)</tmpr>') # when temperature is less than 10, currentcost adds a space before the number
 
-	watts = str(int(watts_ex.findall(data)[0]))  # cast to and from int to strip leading zeros
-	temp = temp_ex.findall(data)[0]  # remove that extra space
+	try:
+		data = str(data)
+		meter.close()
+		watts_ex = re.compile('<watts>([0-9]+)</watts>')
+		temp_ex = re.compile('<tmpr>([\ ]?[0-9\.]+)</tmpr>') # when temperature is less than 10, currentcost adds a space before the number
 
+		watts = str(int(watts_ex.findall(data)[0]))  # cast to and from int to strip leading zeros
+		temp = temp_ex.findall(data)[0]  # remove that extra space
+	except:
+		watts = '--'
+		temp = '--'
 
 	# Replace format string
 	format = format.replace("{{watts}}", watts)
-	#format = format.replace("{{time}}", time)
 	format = format.replace("{{temp}}", temp)
 	
 	print(format)
