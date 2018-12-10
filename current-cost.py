@@ -61,7 +61,6 @@ def main():
 	format = "{ \"watts\": {{watts}},\"temp\": {{temp}} }"
 
 	opts, args = getopt.getopt(sys.argv[1:], "t:p:b:o:r:h", ["help"])
-	
 
 	for o, a in opts:
 		if o == "-t":
@@ -82,7 +81,6 @@ def main():
 			sys.exit()
 
 	meter = serial.Serial(port, baud, timeout=timeout)
-	meter.open()
 	
 	try:
 		data = meter.readline()
