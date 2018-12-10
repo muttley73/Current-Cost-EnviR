@@ -59,12 +59,9 @@ def main():
 	retry = 3
 	#format = "Energy Usage at {{time}}: {{watts}} watts, room temperature {{temp}}C"
 	format = "{ \"watts\": {{watts}},\"temp\": {{temp}} }"
-	try:
-		opts, args = getopt.getopt(sys.argv[1:], "t:p:b:o:r:h", ["help"])
-	except getopt.GetoptError:
-		print(getopt.GetoptError.msg)
-		usage()
-		sys.exit()
+
+	opts, args = getopt.getopt(sys.argv[1:], "t:p:b:o:r:h", ["help"])
+	
 
 	for o, a in opts:
 		if o == "-t":
