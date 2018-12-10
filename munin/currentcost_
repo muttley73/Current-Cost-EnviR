@@ -59,12 +59,12 @@ def main(argv):
 		# Is this a config mode?
 		if len(argv) > 1 and argv[1] == 'config':
 			# CONFIG
-			print 'graph_args --base 1000 -l 0' 
-			print 'graph_scale no'
-			print 'graph_title Current Cost Energy Usage'
-			print 'graph_vlabel Power Usage in Watts'
-			print 'graph_category Power'
-			print 'watts.label Watts'
+			print ('graph_args --base 1000 -l 0')
+			print ('graph_scale no')
+			print ('graph_title Current Cost Energy Usage')
+			print ('graph_vlabel Power Usage in Watts')
+			print ('graph_category Power')
+			print ('watts.label Watts')
 			sys.exit()
 			
 		os.system('cat /tmp/__currentcost_out | cut -d\'|\' -f1')
@@ -74,12 +74,12 @@ def main(argv):
 		# Is this a config mode?
 		if len(argv) > 1 and argv[1] == 'config':
 			# CONFIG
-			print 'graph_args --base 1000 -l -50' 
-			print 'graph_scale no'
-			print 'graph_title Current Cost Temperature'
-			print 'graph_vlabel Temperature C'
-			print 'graph_category Power'
-			print 'temp.label Temperature'
+			print ('graph_args --base 1000 -l -50')
+			print ('graph_scale no')
+			print ('graph_title Current Cost Temperature')
+			print ('graph_vlabel Temperature C')
+			print ('graph_category Power')
+			print ('temp.label Temperature')
 			sys.exit()
 			
 		os.system('cat /tmp/__currentcost_out | cut -d\'|\' -f2')

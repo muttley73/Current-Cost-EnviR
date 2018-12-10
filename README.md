@@ -27,7 +27,7 @@ Limitations:
 Requirements:
 -------------
  
- * Python 2
+ * Python 3
  * pySerial
 
 See

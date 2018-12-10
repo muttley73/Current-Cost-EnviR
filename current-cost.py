@@ -31,6 +31,7 @@
 ###
 
 import getopt
+import getopt.GetoptError
 import sys
 import serial
 import re
@@ -56,12 +57,12 @@ def main():
 	baud = 57600
 	timeout = 10
 	retry = 3
-	format = "Energy Usage at {{time}}: {{watts}} watts, room temperature {{temp}}C"
-
+	#format = "Energy Usage at {{time}}: {{watts}} watts, room temperature {{temp}}C"
+	format = "{ \"watts\": {{watts}},\"temp\": {{temp}} }"
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "t:p:b:o:r:h", ["help"])
-	except getopt.GetoptError, err:
-		print str(err)
+	except getopt.GetoptError:
+		print(getopt.GetoptError.msg)
 		usage()
 		sys.exit()
 
@@ -77,14 +78,12 @@ def main():
 			sys.exit()
 		elif o == "-o":
 			format = a
-		elif r == '-r':
+		elif o == '-r':
 			retry = int(a)
 		else:
 			usage()
 			sys.exit()
-			
-			
-	
+
 	meter = serial.Serial(port, baud, timeout=timeout)
 	meter.open()
 	
@@ -110,15 +109,17 @@ def main():
 		temp = temp_ex.findall(data)[0].strip() # remove that extra space
 		time = time_ex.findall(data)[0]
 	except:
-		sys.stderr.write("Could not get details from device")
-		sys.exit()
-	
+		#sys.stderr.write("Could not get details from device")
+		watts = '--'
+		temp = '--'
+		time = '--'
+
 	# Replace format string
 	format = format.replace("{{watts}}", watts)
 	format = format.replace("{{time}}", time)
 	format = format.replace("{{temp}}", temp)
 	
-	print format
+	print(format)
 	
 if __name__ == "__main__":
     main()
