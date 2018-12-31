@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.5
 ###
 # current-cost.py
 #
@@ -54,7 +54,6 @@ def main():
     baud = 57600
     timeout = 10
     retry = 3
-    data = ''
     # format = "Energy Usage at {{time}}: {{watts}} watts, room temperature {{temp}}C"
     format = "{ \"watts\": {{watts}},\"temp\": {{temp}} }"
 
@@ -84,14 +83,12 @@ def main():
         data = meter.readline()
     except:
         pass
-
-    while (data == '') and (retry > 0):
+    while (not data) and (retry > 0):
         retry = retry - 1
         try:
             data = meter.readline()
         except:
             pass
-
     try:
         data = str(data)
         meter.close()
@@ -101,17 +98,15 @@ def main():
 
         watts = str(int(watts_ex.findall(data)[0]))  # cast to and from int to strip leading zeros
         temp = temp_ex.findall(data)[0]  # remove that extra space
-    except Exception as ex:
-        print(ex.args)
-        watts = '--'
-        temp = '--'
 
-    # Replace format string
-    format = format.replace("{{watts}}", watts)
-    format = format.replace("{{temp}}", temp)
+        format = format.replace("{{watts}}", watts)
+        format = format.replace("{{temp}}", temp)
 
-    print(format)
+        print(format)
 
+    except:
+        pass
+        main()
 
 if __name__ == "__main__":
     main()
