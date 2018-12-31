@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.5
 ###
 # current-cost.py
 #
@@ -96,15 +96,15 @@ def main():
 
 		watts = str(int(watts_ex.findall(data)[0]))  # cast to and from int to strip leading zeros
 		temp = temp_ex.findall(data)[0]  # remove that extra space
-	except:
-		watts = '--'
-		temp = '--'
 
-	# Replace format string
-	format = format.replace("{{watts}}", watts)
-	format = format.replace("{{temp}}", temp)
-	
-	print(format)
-	
+                format = format.replace("{{watts}}", watts)
+                format = format.replace("{{temp}}", temp)
+                        
+                print(format)
+                                
+	except:
+                pass
+                main()
+
 if __name__ == "__main__":
     main()
