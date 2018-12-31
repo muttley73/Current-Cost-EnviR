@@ -36,75 +36,82 @@ import serial
 import re
 import time
 
+
 def usage():
-	print("Current-Cost v1.0 By Marcus Povey <marcus@marcus-povey.co.uk>");
-	print("Usage: python current-cost.py [-t timeout] [-p serial-port] [-b baudrate] [-o \"formatted list of output\"]")
-	print("Where:")
-	print("\t * timeout: is max time to wait for a reading (Default 10)")
-	print("\t * serial-port: Serial port that the meter is connected to (default /dev/ttyUSB0)")
-	print("\t * baudrate: Speed to connect to device (default 57600, which you shouldn't need to change unless you're using a different meter)")
-	print("Format string similar to 'Energy Now: {{option}}, Temperature: {{option}}'")
-	print("Where option can be {{watts}}, {{temp}}, {{time}}")
+    print("Current-Cost v1.0 By Marcus Povey <marcus@marcus-povey.co.uk>");
+    print("Usage: python current-cost.py [-t timeout] [-p serial-port] [-b baudrate] [-o \"formatted list of output\"]")
+    print("Where:")
+    print("\t * timeout: is max time to wait for a reading (Default 10)")
+    print("\t * serial-port: Serial port that the meter is connected to (default /dev/ttyUSB0)")
+    print(
+        "\t * baudrate: Speed to connect to device (default 57600, which you shouldn't need to change unless you're using a different meter)")
+    print("Format string similar to 'Energy Now: {{option}}, Temperature: {{option}}'")
+    print("Where option can be {{watts}}, {{temp}}, {{time}}")
+
 
 def main():
-	
-	port = '/dev/ttyUSB0'
-	baud = 57600
-	timeout = 10
-	retry = 3
-	#format = "Energy Usage at {{time}}: {{watts}} watts, room temperature {{temp}}C"
-	format = "{ \"watts\": {{watts}},\"temp\": {{temp}} }"
+    port = '/dev/ttyUSB0'
+    baud = 57600
+    timeout = 10
+    retry = 3
+    data = ''
+    # format = "Energy Usage at {{time}}: {{watts}} watts, room temperature {{temp}}C"
+    format = "{ \"watts\": {{watts}},\"temp\": {{temp}} }"
 
-	opts, args = getopt.getopt(sys.argv[1:], "t:p:b:o:r:h", ["help"])
+    opts, args = getopt.getopt(sys.argv[1:], "t:p:b:o:r:h", ["help"])
 
-	for o, a in opts:
-		if o == "-t":
-			timeout = int(a)
-		elif o == "-p":
-			port = a
-		elif o == "-b":
-			baud = int(a)
-		elif o in ("-h", "--help"):
-			usage()
-			sys.exit()
-		elif o == "-o":
-			format = a
-		elif o == '-r':
-			retry = int(a)
-		else:
-			usage()
-			sys.exit()
+    for o, a in opts:
+        if o == "-t":
+            timeout = int(a)
+        elif o == "-p":
+            port = a
+        elif o == "-b":
+            baud = int(a)
+        elif o in ("-h", "--help"):
+            usage()
+            sys.exit()
+        elif o == "-o":
+            format = a
+        elif o == '-r':
+            retry = int(a)
+        else:
+            usage()
+            sys.exit()
 
-	meter = serial.Serial(port, baud, timeout=timeout)
+    meter = serial.Serial(port, baud, timeout=timeout)
 
-	try:
-		data = meter.readline()
-	except:
-		pass
-	while (not data) and (retry > 0):
-		retry = retry - 1
-		try:
-			data = meter.readline()
-		except:
-			pass
+    try:
+        data = meter.readline()
+    except:
+        pass
 
-	try:
-		data = str(data)
-		meter.close()
-		watts_ex = re.compile('<watts>([0-9]+)</watts>')
-		temp_ex = re.compile('<tmpr>([\ ]?[0-9\.]+)</tmpr>') # when temperature is less than 10, currentcost adds a space before the number
+    while (data == '') and (retry > 0):
+        retry = retry - 1
+        try:
+            data = meter.readline()
+        except:
+            pass
 
-		watts = str(int(watts_ex.findall(data)[0]))  # cast to and from int to strip leading zeros
-		temp = temp_ex.findall(data)[0]  # remove that extra space
-	except:
-		watts = '--'
-		temp = '--'
+    try:
+        data = str(data)
+        meter.close()
+        watts_ex = re.compile('<watts>([0-9]+)</watts>')
+        temp_ex = re.compile(
+            '<tmpr>([\ ]?[0-9\.]+)</tmpr>')  # when temperature is less than 10, currentcost adds a space before the number
 
-	# Replace format string
-	format = format.replace("{{watts}}", watts)
-	format = format.replace("{{temp}}", temp)
-	
-	print(format)
-	
+        watts = str(int(watts_ex.findall(data)[0]))  # cast to and from int to strip leading zeros
+        temp = temp_ex.findall(data)[0]  # remove that extra space
+    except Exception as ex:
+        print(ex.args)
+        watts = '--'
+        temp = '--'
+
+    # Replace format string
+    format = format.replace("{{watts}}", watts)
+    format = format.replace("{{temp}}", temp)
+
+    print(format)
+
+
 if __name__ == "__main__":
     main()
